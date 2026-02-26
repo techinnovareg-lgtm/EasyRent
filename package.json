@@ -17,6 +17,9 @@
     "cache:clean": "rimraf %LOCALAPPDATA%\\electron-builder\\Cache\\winCodeSign",
     "postinstall": "node -e \"if(process.env.VERCEL !== '1') require('child_process').execSync('electron-builder install-app-deps', {stdio: 'inherit'})\""
   },
+  "engines": {
+    "node": "20.x"
+  },
   "build": {
     "appId": "com.hraestadistica.easyrent",
     "productName": "EasyRent",
