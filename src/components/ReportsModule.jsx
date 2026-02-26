@@ -11,7 +11,7 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
     wb.created = new Date()
     const ws = wb.addWorksheet(t('finances.title'))
 
-    const currencySymbol = t('common.currencySymbol') || (rows[0]?.language === 'en' ? 'USD ' : 'S/ ')
+    const currencySymbol = rows[0]?.language === 'en' ? '$' : 'S/.'
     const currencySuffix = rows[0]?.language === 'en' ? ' (USD)' : ' (S/.)'
 
     ws.columns = [
