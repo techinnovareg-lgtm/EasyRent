@@ -97,8 +97,8 @@ const normalizeFinance = (f) => {
             late_fee: Number(f.late_fee || 0),
             receipt_paths: parseJson(f.receipt_paths, []),
             property_name: f.property_name || prop?.name || 'Propiedad desconocida',
-            tenant_name: f.tenant_name || ten?.full_name || 'Inquilino desconocido',
-            tenant_doc: f.tenant_doc || (ten ? `${ten.doc_type || ''} ${ten.doc_number || ''}`.trim() : '—'),
+            tenant_name: f.tenant_name || ten?.full_name || '',
+            tenant_doc: f.tenant_doc || (ten ? `${ten.doc_type || ''} ${ten.doc_number || ''}`.trim() : ''),
             type: f.type || 'ingreso',
             status: f.status || 'pendiente',
             property_id: f.property_id || prop?.id || null

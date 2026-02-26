@@ -22,7 +22,6 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
         { header: t('common.document'), key: 'tenant_doc', width: 16 },
         { header: `${t('finances.form.amount')}${currencySuffix}`, key: 'amount', width: 16 },
         { header: `${t('finances.form.lateFee')}${currencySuffix}`, key: 'late_fee', width: 14 },
-        { header: `${t('finances.form.taxAmount')}${currencySuffix}`, key: 'tax_amount', width: 14 },
         { header: `${t('finances.table.totalAmount')}${currencySuffix}`, key: 'total_amount', width: 16 },
         { header: t('common.status'), key: 'status', width: 14 },
         { header: t('finances.form.dueDate'), key: 'due_date', width: 16 },
@@ -47,14 +46,12 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
             status: t(`finances.status.${r.status}`) || r.status,
             amount: r.converted_amount,
             late_fee: r.converted_late_fee,
-            tax_amount: r.converted_tax_amount,
-            total_amount: (Number(r.converted_amount) || 0) + (Number(r.converted_late_fee) || 0) + (Number(r.converted_tax_amount) || 0)
+            total_amount: (Number(r.converted_amount) || 0) + (Number(r.converted_late_fee) || 0)
         }
         const row = ws.addRow(rowData)
         const format = `"${currencySymbol}"#,##0.00`
         row.getCell('amount').numFmt = format
         row.getCell('late_fee').numFmt = format
-        row.getCell('tax_amount').numFmt = format
         row.getCell('total_amount').numFmt = format
         if (r.type === 'ingreso') row.getCell('type').font = { color: { argb: 'FF059669' }, bold: true }
         else row.getCell('type').font = { color: { argb: 'FFdc2626' }, bold: true }
@@ -66,14 +63,12 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
         type: 'TOTAL',
         amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_amount) : -Number(r.converted_amount)), 0),
         late_fee: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_late_fee || 0) : -Number(r.converted_late_fee || 0)), 0),
-        tax_amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_tax_amount || 0) : -Number(r.converted_tax_amount || 0)), 0),
-        total_amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? (Number(r.converted_amount) + Number(r.converted_late_fee || 0) + Number(r.converted_tax_amount || 0)) : -(Number(r.converted_amount) + Number(r.converted_late_fee || 0) + Number(r.converted_tax_amount || 0))), 0),
+        total_amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? (Number(r.converted_amount) + Number(r.converted_late_fee || 0)) : -(Number(r.converted_amount) + Number(r.converted_late_fee || 0))), 0),
     })
     totalRow.getCell('type').font = { bold: true }
     const totalFormat = `"${currencySymbol}"#,##0.00`
     totalRow.getCell('amount').numFmt = totalFormat
     totalRow.getCell('late_fee').numFmt = totalFormat
-    totalRow.getCell('tax_amount').numFmt = totalFormat
     totalRow.getCell('total_amount').numFmt = totalFormat
     totalRow.font = { bold: true }
 
@@ -121,16 +116,15 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
         startY: filters.tenant || filters.property || filters.month ? 35 : 28,
         head: [[
             t('finances.form.type'), t('finances.form.category'), t('properties.title'), t('tenants.title'),
-            t('reports.distribution'), t('finances.form.lateFee'), t('finances.form.taxAmount'),
-            t('finances.form.periodMonth'), t('common.status'), t('finances.form.paymentDate')
+            t('reports.distribution'), t('finances.form.lateFee'), t('finances.form.periodMonth'),
+            t('common.status'), t('finances.form.paymentDate')
         ]],
         body: rows.map(r => [
             r.type === 'ingreso' ? `${t('finances.types.ingreso')} ▲` : `${t('finances.types.egreso')} ▼`,
             t(`finances.categories.${r.category}`) || r.category,
             r.property_name || '—', r.tenant_name || '—',
-            fmt((Number(r.amount) || 0) + (Number(r.late_fee) || 0) + (Number(r.tax_amount) || 0)),
+            fmt((Number(r.amount) || 0) + (Number(r.late_fee) || 0)),
             r.late_fee > 0 ? fmt(r.late_fee) : '—',
-            r.tax_amount > 0 ? fmt(r.tax_amount) : '—',
             r.period_month || '—',
             t(`finances.status.${r.status}`) || r.status,
             fmtDate(r.payment_date),
@@ -146,7 +140,7 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
         },
         foot: [[
             '', '', '', '', 'BALANCE', fmt(rows.reduce((a, r) => a + (r.type === 'ingreso' ? r.amount : -r.amount), 0)),
-            '', '', '', ''
+            '', '', ''
         ]],
         footStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
     })
@@ -260,7 +254,6 @@ export default function ReportsModule() {
             ...r,
             converted_amount: language === 'en' ? (Number(r.amount) / ER) : Number(r.amount),
             converted_late_fee: language === 'en' ? (Number(r.late_fee || 0) / ER) : Number(r.late_fee || 0),
-            converted_tax_amount: language === 'en' ? (Number(r.tax_amount || 0) / ER) : Number(r.tax_amount || 0),
             language // Pass language to the exporter
         }))
         try { await exportExcel(preppedRows, t, `EasyRent_Report_${filters.month || 'full'}`) }

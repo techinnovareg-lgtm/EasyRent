@@ -370,8 +370,27 @@ export default function FinanceModule() {
             tax_rate: Number(form.tax_rate || 0),
             tax_amount: Number(form.tax_amount || 0),
         }
-        if (editId) await api.finances.update(editId, payload)
-        else await api.finances.create(payload)
+        if (editId) {
+            await api.finances.update(editId, payload)
+        } else {
+            const newRes = await api.finances.create(payload)
+            // If it's a rent income and has tax, automatically create the tax expense
+            if (payload.type === 'ingreso' && payload.category === 'renta' && payload.tax_amount > 0) {
+                const taxPayload = {
+                    type: 'egreso',
+                    category: 'impuesto',
+                    amount: payload.tax_amount,
+                    currency: payload.currency,
+                    payment_date: payload.payment_date,
+                    due_date: payload.due_date,
+                    period_month: payload.period_month,
+                    status: payload.status,
+                    property_id: payload.property_id,
+                    notes: `Impuesto automático (Renta ${payload.period_month || ''})`
+                }
+                await api.finances.create(taxPayload)
+            }
+        }
         await load()
     }
 
