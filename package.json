@@ -15,7 +15,7 @@
     "build:win": "taskkill /F /IM EasyRent.exe /T /FI \"STATUS eq RUNNING\" & npm run build:renderer && electron-builder --win --x64",
     "build:clean": "rimraf dist dist-renderer dist-web && npm run build:win",
     "cache:clean": "rimraf %LOCALAPPDATA%\\electron-builder\\Cache\\winCodeSign",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "node -e \"if(process.env.VERCEL !== '1') require('child_process').execSync('electron-builder install-app-deps', {stdio: 'inherit'})\""
   },
   "build": {
     "appId": "com.hraestadistica.easyrent",
