@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 480px;
+            height: 320px;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: Inter, system-ui, sans-serif;
+            color: white;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+
+        .logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 6px;
+        }
+
+        .bar {
+            width: 180px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 99px;
+            margin-top: 32px;
+            overflow: hidden;
+        }
+
+        .bar-inner {
+            height: 100%;
+            background: #3b82f6;
+            border-radius: 99px;
+            animation: load 1.5s ease-out forwards;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes load {
+            0% {
+                width: 0;
+            }
+
+            100% {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="logo">🏠</div>
+    <h1>EasyRent</h1>
+    <p>Sistema de Gestión Inmobiliaria</p>
+    <div class="bar">
+        <div class="bar-inner"></div>
+    </div>
+</body>
+
+</html>
