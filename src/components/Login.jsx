@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Building2, Mail, Lock, Loader2, CheckCircle2, AlertCircle, MessageCircle } from 'lucide-react'
 import { api } from '../services/ApiService'
 import { useTranslation } from '../context/LanguageContext'
+import logo from '../assets/logo.png'
 
 export default function Login() {
     const { t } = useTranslation()
@@ -45,10 +46,8 @@ export default function Login() {
             >
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-                        <Building2 size={36} className="text-white" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white">EasyRent</h1>
+                    <img src={logo} alt="EasyRent" className="w-24 h-24 mx-auto mb-4 object-contain shadow-xl shadow-blue-500/10 rounded-full bg-white p-3" />
+                    <h1 className="text-3xl font-bold text-white tracking-tight">EasyRent</h1>
                     <p className="text-slate-400 mt-1">{isRegistering ? t('auth.signUpTitle') : t('auth.signInTitle')}</p>
                 </div>
 

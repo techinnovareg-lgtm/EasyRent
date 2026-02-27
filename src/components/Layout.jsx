@@ -9,6 +9,7 @@ import {
     BarChart3, Sun, Moon, ChevronLeft, ChevronRight, X, Minus, Maximize2, LogOut,
     Cloud, RefreshCw, LifeBuoy, ShieldCheck, Languages, Wrench, Menu, Loader2
 } from 'lucide-react'
+import logo from '../assets/logo.png'
 
 const NAV_ITEMS = [
     { to: '/', icon: LayoutDashboard, key: 'dashboard' },
@@ -28,7 +29,10 @@ const isElectron = Boolean(window.easyrent)
 function TitleBar() {
     return (
         <div className="drag-region h-8 flex items-center justify-between px-3 bg-slate-900 text-slate-400 text-xs select-none shrink-0 hidden md:flex">
-            <span className="font-semibold text-white/70">EasyRent</span>
+            <div className="flex items-center gap-1.5 opacity-80">
+                <img src={logo} alt="EasyRent" className="w-4 h-4 object-contain" />
+                <span className="font-semibold text-white/70">EasyRent</span>
+            </div>
             <div className="no-drag flex items-center gap-1">
                 <button onClick={() => isElectron && window.easyrent.window.minimize()} className="hover:bg-slate-700 rounded p-1 transition"><Minus size={12} /></button>
                 <button onClick={() => isElectron && window.easyrent.window.maximize()} className="hover:bg-slate-700 rounded p-1 transition"><Maximize2 size={12} /></button>
@@ -158,11 +162,9 @@ export default function Layout({ children }) {
 
             {/* Mobile Header */}
             <header className="md:hidden flex items-center justify-between px-4 h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shrink-0">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
-                        <Building2 size={16} className="text-white" />
-                    </div>
-                    <span className="font-bold text-slate-800 dark:text-white">EasyRent</span>
+                <div className="flex items-center gap-2.5">
+                    <img src={logo} alt="EasyRent" className="w-8 h-8 object-contain rounded-lg shadow-sm" />
+                    <span className="font-bold text-slate-800 dark:text-white tracking-tight">EasyRent</span>
                 </div>
                 <button
                     onClick={() => setMobileMenuOpen(true)}
@@ -199,16 +201,14 @@ export default function Layout({ children }) {
                     `}
                 >
                     <div className={`flex items-center gap-3 p-4 ${collapsed ? 'justify-center' : ''} hidden md:flex`}>
-                        <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                            <Building2 size={16} className="text-white" />
-                        </div>
+                        <img src={logo} alt="EasyRent" className="w-8 h-8 object-contain shrink-0" />
                         <AnimatePresence>
                             {!collapsed && (
                                 <motion.span
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -10 }}
-                                    className="font-bold text-slate-800 dark:text-white whitespace-nowrap"
+                                    className="font-bold text-slate-800 dark:text-white whitespace-nowrap tracking-tight"
                                 >
                                     EasyRent
                                 </motion.span>
@@ -218,7 +218,10 @@ export default function Layout({ children }) {
 
                     {/* Mobile Menu Close Button */}
                     <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-700">
-                        <span className="font-bold text-slate-800 dark:text-white font-mono tracking-tighter italic">EasyRent</span>
+                        <div className="flex items-center gap-2">
+                            <img src={logo} alt="EasyRent" className="w-6 h-6 object-contain" />
+                            <span className="font-bold text-slate-800 dark:text-white tracking-tight">EasyRent</span>
+                        </div>
                         <button onClick={() => setMobileMenuOpen(false)}>
                             <X size={20} className="text-slate-400 hover:text-red-500" />
                         </button>

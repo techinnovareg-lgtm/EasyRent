@@ -5,6 +5,7 @@ import { Building2, Key, Loader2, CheckCircle2, AlertCircle, Shield } from 'luci
 import { api } from '../services/ApiService'
 import { useLicense } from '../App'
 import { useTranslation } from '../context/LanguageContext'
+import logo from '../assets/logo.png'
 
 const DEMO_KEY = 'EASYRENT-DEMO-0000-0000-XXXX'
 
@@ -47,10 +48,8 @@ export default function LicenseValidator() {
             >
                 {/* Logo */}
                 <div className="text-center mb-8">
-                    <div className="w-20 h-20 bg-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30">
-                        <Building2 size={36} className="text-white" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white">EasyRent</h1>
+                    <img src={logo} alt="EasyRent" className="w-24 h-24 mx-auto mb-4 object-contain shadow-xl shadow-blue-500/10 rounded-full bg-white p-3" />
+                    <h1 className="text-3xl font-bold text-white tracking-tight">EasyRent</h1>
                     <p className="text-slate-400 mt-1">{t('license.validator.subtitle')}</p>
                 </div>
 

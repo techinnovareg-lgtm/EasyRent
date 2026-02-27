@@ -128,11 +128,11 @@ const MaintenanceModule = () => {
         <div className="p-6 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-3">
+                    <h1 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
                         <Wrench className="text-blue-500" />
                         {t('maintenance.title')}
                     </h1>
-                    <p className="text-slate-400 text-sm">{t('maintenance.subtitle')}</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">{t('maintenance.subtitle')}</p>
                 </div>
                 <button
                     onClick={() => {
@@ -151,21 +151,21 @@ const MaintenanceModule = () => {
 
             <div className="flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" size={18} />
                     <input
                         type="text"
                         placeholder={t('maintenance.searchPlaceholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+                        className="w-full bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm dark:shadow-none"
                     />
                 </div>
-                <div className="flex items-center gap-2 bg-slate-800/50 border border-slate-700 rounded-xl px-3">
-                    <Filter size={18} className="text-slate-500" />
+                <div className="flex items-center gap-2 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl px-3 shadow-sm dark:shadow-none">
+                    <Filter size={18} className="text-slate-400 dark:text-slate-500" />
                     <select
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
-                        className="bg-transparent text-slate-300 py-2 focus:outline-none text-sm"
+                        className="bg-transparent text-slate-700 dark:text-slate-300 py-2 focus:outline-none text-sm"
                     >
                         <option value="all">{t('common.all')}</option>
                         <option value="open">{t('maintenance.status.open')}</option>
@@ -179,12 +179,12 @@ const MaintenanceModule = () => {
             {loading ? (
                 <div className="flex flex-col items-center justify-center py-20 gap-4">
                     <Loader2 className="animate-spin text-blue-500" size={40} />
-                    <p className="text-slate-400">{t('maintenance.loading')}</p>
+                    <p className="text-slate-500 dark:text-slate-400">{t('maintenance.loading')}</p>
                 </div>
             ) : filteredTickets.length === 0 ? (
-                <div className="bg-slate-800/20 border border-dashed border-slate-700 rounded-2xl py-20 text-center">
-                    <div className="bg-slate-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Wrench className="text-slate-600" size={30} />
+                <div className="bg-slate-50 dark:bg-slate-800/20 border border-dashed border-slate-200 dark:border-slate-700 rounded-2xl py-20 text-center">
+                    <div className="bg-white dark:bg-slate-800/50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm dark:shadow-none">
+                        <Wrench className="text-slate-400 dark:text-slate-600" size={30} />
                     </div>
                     <p className="text-slate-500">{t('maintenance.noResults')}</p>
                 </div>
@@ -195,7 +195,7 @@ const MaintenanceModule = () => {
                             key={ticket.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-slate-800/30 border border-slate-700/50 rounded-2xl p-5 hover:border-slate-500/50 transition-all group"
+                            className="bg-white dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-5 hover:border-blue-500/50 dark:hover:border-slate-500/50 transition-all group shadow-sm dark:shadow-none"
                         >
                             <div className="flex justify-between items-start mb-4">
                                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${getPriorityColor(ticket.priority)}`}>
@@ -208,33 +208,33 @@ const MaintenanceModule = () => {
                                             setFormData(ticket)
                                             setIsFormOpen(true)
                                         }}
-                                        className="p-1.5 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 rounded-lg transition-colors"
+                                        className="p-1.5 hover:bg-blue-50 dark:hover:bg-blue-500/20 text-slate-400 hover:text-blue-500 dark:hover:text-blue-400 rounded-lg transition-colors"
                                     >
                                         <Edit2 size={16} />
                                     </button>
                                     <button
                                         onClick={() => handleDelete(ticket.id)}
-                                        className="p-1.5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 rounded-lg transition-colors"
+                                        className="p-1.5 hover:bg-red-50 dark:hover:bg-red-500/20 text-slate-400 hover:text-red-500 dark:hover:text-red-400 rounded-lg transition-colors"
                                     >
                                         <Trash2 size={16} />
                                     </button>
                                 </div>
                             </div>
 
-                            <h3 className="text-white font-semibold mb-1 line-clamp-1">{ticket.title}</h3>
+                            <h3 className="text-slate-800 dark:text-white font-semibold mb-1 line-clamp-1">{ticket.title}</h3>
                             <p className="text-slate-500 text-xs mb-4 flex items-center gap-1">
                                 <Building2 size={12} /> {ticket.property_name}
                             </p>
 
                             <div className="space-y-3 mb-4">
-                                <div className="flex items-center justify-between text-xs text-slate-400">
+                                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                                     <span className="flex items-center gap-2">
                                         {getStatusIcon(ticket.status)}
                                         {t(`maintenance.status.${ticket.status}`)}
                                     </span>
                                     <span>{new Date(ticket.created_at).toLocaleDateString()}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
+                                <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                                     <div
                                         className={`h-full rounded-full transition-all duration-500 ${ticket.status === 'resolved' || ticket.status === 'closed' ? 'bg-emerald-500 w-full' :
                                             ticket.status === 'in_progress' ? 'bg-amber-500 w-1/2' : 'bg-blue-500 w-1/4'
@@ -243,10 +243,10 @@ const MaintenanceModule = () => {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between pt-4 border-t border-white/5 mt-4">
+                            <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-white/5 mt-4">
                                 <div>
-                                    <p className="text-[10px] text-slate-500 uppercase font-bold">{t('maintenance.form.actualCost')}</p>
-                                    <p className="text-white font-bold">{formatCurrency(ticket.actual_cost)}</p>
+                                    <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold">{t('maintenance.form.actualCost')}</p>
+                                    <p className="text-slate-800 dark:text-white font-bold">{formatCurrency(ticket.actual_cost)}</p>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {ticket.status === 'resolved' && !ticket.finance_id && (
@@ -278,14 +278,14 @@ const MaintenanceModule = () => {
                                         </button>
                                     )}
                                     {ticket.finance_id && (
-                                        <span className="text-[10px] h-8 bg-slate-700 text-slate-300 font-bold px-3 rounded-lg flex items-center gap-1.5 opacity-60">
+                                        <span className="text-[10px] h-8 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold px-3 rounded-lg flex items-center gap-1.5 opacity-80 dark:opacity-60">
                                             <CheckCircle2 size={10} /> {t('finances.types.egreso')} {t('finances.status.pagado')}
                                         </span>
                                     )}
                                     {ticket.photos && ticket.photos.length > 0 && (
                                         <div className="flex -space-x-2">
                                             {ticket.photos.slice(0, 3).map((photo, i) => (
-                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-800 overflow-hidden bg-slate-700">
+                                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-800 overflow-hidden bg-slate-100 dark:bg-slate-700 shadow-sm">
                                                     <img src={photo} alt="" className="w-full h-full object-cover" />
                                                 </div>
                                             ))}
@@ -313,13 +313,13 @@ const MaintenanceModule = () => {
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="relative bg-slate-900 border border-slate-700 w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl"
+                            className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl"
                         >
-                            <div className="p-6 border-b border-slate-800 flex justify-between items-center">
-                                <h2 className="text-xl font-bold text-white">
+                            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                                <h2 className="text-xl font-bold text-slate-800 dark:text-white">
                                     {editingTicket ? t('maintenance.edit') : t('maintenance.new')}
                                 </h2>
-                                <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-white">
+                                <button onClick={() => setIsFormOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                                     <X size={24} />
                                 </button>
                             </div>
@@ -327,12 +327,12 @@ const MaintenanceModule = () => {
                             <form onSubmit={handleSubmit} className="p-6 space-y-5 max-h-[70vh] overflow-y-auto custom-scrollbar">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2">
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.property')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.property')}</label>
                                         <select
                                             required
                                             value={formData.property_id}
                                             onChange={(e) => setFormData({ ...formData, property_id: e.target.value })}
-                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                         >
                                             <option value="">— {t('common.select')} —</option>
                                             {properties.map(p => (
@@ -342,33 +342,33 @@ const MaintenanceModule = () => {
                                     </div>
 
                                     <div className="col-span-2">
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.title')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.title')}</label>
                                         <input
                                             required
                                             type="text"
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                             placeholder={t('maintenance.form.titlePlaceholder')}
-                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                         />
                                     </div>
 
                                     <div className="col-span-2">
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.description')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.description')}</label>
                                         <textarea
                                             value={formData.description}
                                             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                             rows={3}
-                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500 resize-none"
+                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500 resize-none"
                                         />
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.priority')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.priority')}</label>
                                         <select
                                             value={formData.priority}
                                             onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                         >
                                             <option value="low">{t('maintenance.priority.low')}</option>
                                             <option value="medium">{t('maintenance.priority.medium')}</option>
@@ -377,11 +377,11 @@ const MaintenanceModule = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.status')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.status')}</label>
                                         <select
                                             value={formData.status}
                                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                            className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                         >
                                             <option value="open">{t('maintenance.status.open')}</option>
                                             <option value="in_progress">{t('maintenance.status.in_progress')}</option>
@@ -391,7 +391,7 @@ const MaintenanceModule = () => {
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">
                                             {t('maintenance.form.estimatedCost')} ({language === 'es' ? 'S/.' : 'USD'})
                                         </label>
                                         <div className="relative">
@@ -399,13 +399,13 @@ const MaintenanceModule = () => {
                                                 type="number"
                                                 value={formData.estimated_cost}
                                                 onChange={(e) => setFormData({ ...formData, estimated_cost: parseFloat(e.target.value) })}
-                                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">
                                             {t('maintenance.form.actualCost')} ({language === 'es' ? 'S/.' : 'USD'})
                                         </label>
                                         <div className="relative">
@@ -413,16 +413,16 @@ const MaintenanceModule = () => {
                                                 type="number"
                                                 value={formData.actual_cost}
                                                 onChange={(e) => setFormData({ ...formData, actual_cost: parseFloat(e.target.value) })}
-                                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl py-2.5 px-4 text-white focus:outline-none focus:border-blue-500"
+                                                className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl py-2.5 px-4 text-slate-800 dark:text-white focus:outline-none focus:border-blue-500"
                                             />
                                         </div>
                                     </div>
 
                                     <div className="col-span-2">
-                                        <label className="block text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.photos')}</label>
+                                        <label className="block text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-2">{t('maintenance.form.photos')}</label>
                                         <div className="flex flex-wrap gap-2">
                                             {formData.photos.map((url, i) => (
-                                                <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden group">
+                                                <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden group border border-slate-200 dark:border-slate-700">
                                                     <img src={url} alt="" className="w-full h-full object-cover" />
                                                     <button
                                                         type="button"
@@ -445,13 +445,13 @@ const MaintenanceModule = () => {
                                     <button
                                         type="button"
                                         onClick={() => setIsFormOpen(false)}
-                                        className="flex-1 bg-slate-800 hover:bg-slate-750 text-white font-bold py-3 px-6 rounded-xl transition-all"
+                                        className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-750 text-slate-700 dark:text-white font-bold py-3 px-6 rounded-xl transition-all"
                                     >
                                         {t('common.cancel')}
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-blue-900/20"
+                                        className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl transition-all shadow-lg shadow-blue-500/30 dark:shadow-blue-900/20"
                                     >
                                         {editingTicket ? t('maintenance.form.save') : t('maintenance.new')}
                                     </button>
