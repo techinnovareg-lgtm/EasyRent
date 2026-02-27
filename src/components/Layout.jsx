@@ -141,12 +141,14 @@ export default function Layout({ children }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [showExitModal, setShowExitModal] = useState(false)
     const [isAdmin, setIsAdmin] = useState(false)
+    const [userEmail, setUserEmail] = useState('')
     const location = useLocation()
 
     useEffect(() => {
         if (!isElectron) {
             api.auth.getSession().then(({ session }) => {
                 setIsAdmin(session?.user?.email === 'tech.innova.reg@gmail.com')
+                setUserEmail(session?.user?.email || '')
             })
         }
     }, [])
@@ -215,6 +217,28 @@ export default function Layout({ children }) {
                             )}
                         </AnimatePresence>
                     </div>
+
+                    {/* User Email Badge */}
+                    {userEmail && (
+                        <div className={`hidden md:flex items-center gap-2.5 px-3 py-2 mx-2 mb-1 bg-blue-50 dark:bg-blue-950/30 rounded-xl border border-blue-100 dark:border-blue-900/40 ${collapsed ? 'justify-center' : ''}`}>
+                            <div className="w-6 h-6 shrink-0 rounded-full bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold uppercase">
+                                {userEmail[0]}
+                            </div>
+                            <AnimatePresence>
+                                {!collapsed && (
+                                    <motion.span
+                                        initial={{ opacity: 0, x: -6 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -6 }}
+                                        className="text-[11px] text-blue-700 dark:text-blue-300 font-medium truncate max-w-[130px]"
+                                        title={userEmail}
+                                    >
+                                        {userEmail}
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    )}
 
                     {/* Mobile Menu Close Button */}
                     <div className="md:hidden flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-700">
