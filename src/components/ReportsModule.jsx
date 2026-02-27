@@ -39,28 +39,39 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
     ws.getRow(1).height = 20
 
     rows.forEach(r => {
+        const isEgreso = r.type === 'egreso'
+        const amt = isEgreso ? -Number(r.converted_amount) : Number(r.converted_amount)
+        const late = isEgreso ? -Number(r.converted_late_fee || 0) : Number(r.converted_late_fee || 0)
+
         const rowData = {
             ...r,
             type: t(`finances.types.${r.type}`) || r.type,
             category: t(`finances.categories.${r.category}`) || r.category,
             status: t(`finances.status.${r.status}`) || r.status,
-            amount: r.converted_amount,
-            late_fee: r.converted_late_fee,
-            total_amount: (Number(r.converted_amount) || 0) + (Number(r.converted_late_fee) || 0)
+            amount: amt,
+            late_fee: late,
+            total_amount: amt + late
         }
         const row = ws.addRow(rowData)
         const format = `"${currencySymbol}"#,##0.00`
         row.getCell('amount').numFmt = format
         row.getCell('late_fee').numFmt = format
         row.getCell('total_amount').numFmt = format
-        if (r.type === 'ingreso') row.getCell('type').font = { color: { argb: 'FF059669' }, bold: true }
-        else row.getCell('type').font = { color: { argb: 'FFdc2626' }, bold: true }
+
+        if (isEgreso) {
+            row.getCell('type').font = { color: { argb: 'FFdc2626' }, bold: true }
+            row.getCell('amount').font = { color: { argb: 'FFdc2626' } }
+            row.getCell('late_fee').font = { color: { argb: 'FFdc2626' } }
+            row.getCell('total_amount').font = { color: { argb: 'FFdc2626' }, bold: true }
+        } else {
+            row.getCell('type').font = { color: { argb: 'FF059669' }, bold: true }
+        }
     })
 
     // Totals
     ws.addRow([])
     const totalRow = ws.addRow({
-        type: 'TOTAL',
+        type: 'BALANCE FINAL',
         amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_amount) : -Number(r.converted_amount)), 0),
         late_fee: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_late_fee || 0) : -Number(r.converted_late_fee || 0)), 0),
         total_amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? (Number(r.converted_amount) + Number(r.converted_late_fee || 0)) : -(Number(r.converted_amount) + Number(r.converted_late_fee || 0))), 0),
@@ -112,6 +123,10 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
         doc.text(filterText, 14, 30)
     }
 
+    const totalIngresos = rows.filter(r => r.type === 'ingreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
+    const totalEgresos = rows.filter(r => r.type === 'egreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
+    const balance = totalIngresos - totalEgresos
+
     autoTable(doc, {
         startY: filters.tenant || filters.property || filters.month ? 35 : 28,
         head: [[
@@ -119,30 +134,50 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
             t('reports.distribution'), t('finances.form.lateFee'), t('finances.form.periodMonth'),
             t('common.status'), t('finances.form.paymentDate')
         ]],
-        body: rows.map(r => [
-            r.type === 'ingreso' ? `${t('finances.types.ingreso')} ▲` : `${t('finances.types.egreso')} ▼`,
-            t(`finances.categories.${r.category}`) || r.category,
-            r.property_name || '—', r.tenant_name || '—',
-            fmt((Number(r.amount) || 0) + (Number(r.late_fee) || 0)),
-            r.late_fee > 0 ? fmt(r.late_fee) : '—',
-            r.period_month || '—',
-            t(`finances.status.${r.status}`) || r.status,
-            fmtDate(r.payment_date),
-        ]),
+        body: rows.map(r => {
+            const isEgreso = r.type === 'egreso'
+            const rawAmt = (Number(r.amount) || 0) + (Number(r.late_fee) || 0)
+            return [
+                isEgreso ? `${t('finances.types.egreso')} ▼` : `${t('finances.types.ingreso')} ▲`,
+                t(`finances.categories.${r.category}`) || r.category,
+                r.property_name || '—', r.tenant_name || '—',
+                isEgreso ? `- ${fmt(rawAmt)}` : fmt(rawAmt),
+                r.late_fee > 0 ? fmt(r.late_fee) : '—',
+                r.period_month || '—',
+                t(`finances.status.${r.status}`) || r.status,
+                fmtDate(r.payment_date),
+            ]
+        }),
         styles: { fontSize: 7, cellPadding: 2 },
         headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
         alternateRowStyles: { fillColor: [248, 250, 252] },
         didParseCell: (d) => {
-            if (d.section === 'body' && d.column.index === 0) {
-                d.cell.styles.textColor = d.cell.raw.includes('▲') ? [5, 150, 105] : [220, 38, 38]
-                d.cell.styles.fontStyle = 'bold'
+            if (d.section === 'body') {
+                const isEgreso = d.row.raw[0]?.includes('▼')
+                if (d.column.index === 0) {
+                    d.cell.styles.textColor = isEgreso ? [220, 38, 38] : [5, 150, 105]
+                    d.cell.styles.fontStyle = 'bold'
+                }
+                if (isEgreso && d.column.index === 4) {
+                    d.cell.styles.textColor = [220, 38, 38]
+                }
             }
         },
-        foot: [[
-            '', '', '', '', 'BALANCE', fmt(rows.reduce((a, r) => a + (r.type === 'ingreso' ? r.amount : -r.amount), 0)),
-            '', '', ''
-        ]],
+        foot: [
+            ['', '', '', '', `▲ ${t('finances.types.ingreso')}`, fmt(totalIngresos), '', '', ''],
+            ['', '', '', '', `▼ ${t('finances.types.egreso')}`, `- ${fmt(totalEgresos)}`, '', '', ''],
+            ['', '', '', '', 'BALANCE NETO', balance >= 0 ? fmt(balance) : `- ${fmt(Math.abs(balance))}`, '', '', ''],
+        ],
         footStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
+        didParseCell: (d) => {
+            if (d.section === 'foot') {
+                const isEgresoRow = d.row.raw[4]?.includes('▼')
+                const isBalanceRow = d.row.raw[4] === 'BALANCE NETO'
+                if (isEgresoRow) d.cell.styles.fillColor = [220, 38, 38]
+                else if (isBalanceRow) d.cell.styles.fillColor = balance >= 0 ? [5, 150, 105] : [185, 28, 28]
+                else d.cell.styles.fillColor = [37, 99, 235]
+            }
+        },
     })
 
     doc.save(`${filename}.pdf`)
