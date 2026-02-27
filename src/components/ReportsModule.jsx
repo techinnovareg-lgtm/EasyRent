@@ -176,20 +176,13 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
                     d.cell.styles.textColor = [220, 38, 38]
                 }
             }
-        },
-        foot: [
-            ['', '', '', '', `▲ ${t('finances.types.ingreso')}`, fmt(totalIngresos), '', '', ''],
-            ['', '', '', '', `▼ ${t('finances.types.egreso')}`, `- ${fmt(totalEgresos)}`, '', '', ''],
-            ['', '', '', '', 'BALANCE NETO', balance >= 0 ? fmt(balance) : `- ${fmt(Math.abs(balance))}`, '', '', ''],
-            ...(pendingPDF.length > 0 ? [['', '', '', '', `(*) ${pendingPDF.length} pendiente(s) excluido(s)`, '', '', '', '']] : []),
-        ],
-        footStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
-        didParseCell: (d) => {
             if (d.section === 'foot') {
                 const isEgresoRow = d.row.raw[4]?.includes('▼')
                 const isBalanceRow = d.row.raw[4] === 'BALANCE NETO'
+                const isPendingRow = d.row.raw[4]?.includes('(*)')
                 if (isEgresoRow) d.cell.styles.fillColor = [220, 38, 38]
                 else if (isBalanceRow) d.cell.styles.fillColor = balance >= 0 ? [5, 150, 105] : [185, 28, 28]
+                else if (isPendingRow) { d.cell.styles.fillColor = [245, 158, 11]; d.cell.styles.fontSize = 7 }
                 else d.cell.styles.fillColor = [37, 99, 235]
             }
         },
