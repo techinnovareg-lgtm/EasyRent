@@ -68,13 +68,24 @@ async function exportExcel(rows, t, filename = 'EasyRent_Report') {
         }
     })
 
-    // Totals
+    // Totals — exclude 'pendiente' records (not yet realized)
+    const effectiveRows = rows.filter(r => r.status !== 'pendiente')
     ws.addRow([])
+
+    // Pending info row
+    const pendingRows = rows.filter(r => r.status === 'pendiente')
+    if (pendingRows.length > 0) {
+        const pendingTxt = ws.addRow({ type: `(*) ${pendingRows.length} registro(s) pendiente(s) no incluido(s) en el balance` })
+        pendingTxt.getCell('type').font = { italic: true, color: { argb: 'FFd97706' }, size: 9 }
+        ws.mergeCells(`A${pendingTxt.number}:H${pendingTxt.number}`)
+        ws.addRow([])
+    }
+
     const totalRow = ws.addRow({
         type: 'BALANCE FINAL',
-        amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_amount) : -Number(r.converted_amount)), 0),
-        late_fee: rows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_late_fee || 0) : -Number(r.converted_late_fee || 0)), 0),
-        total_amount: rows.reduce((a, r) => a + (r.type === 'ingreso' ? (Number(r.converted_amount) + Number(r.converted_late_fee || 0)) : -(Number(r.converted_amount) + Number(r.converted_late_fee || 0))), 0),
+        amount: effectiveRows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_amount) : -Number(r.converted_amount)), 0),
+        late_fee: effectiveRows.reduce((a, r) => a + (r.type === 'ingreso' ? Number(r.converted_late_fee || 0) : -Number(r.converted_late_fee || 0)), 0),
+        total_amount: effectiveRows.reduce((a, r) => a + (r.type === 'ingreso' ? (Number(r.converted_amount) + Number(r.converted_late_fee || 0)) : -(Number(r.converted_amount) + Number(r.converted_late_fee || 0))), 0),
     })
     totalRow.getCell('type').font = { bold: true }
     const totalFormat = `"${currencySymbol}"#,##0.00`
@@ -123,8 +134,11 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
         doc.text(filterText, 14, 30)
     }
 
-    const totalIngresos = rows.filter(r => r.type === 'ingreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
-    const totalEgresos = rows.filter(r => r.type === 'egreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
+    // Exclude 'pendiente' records from totals — not yet realized transactions
+    const effectivePDF = rows.filter(r => r.status !== 'pendiente')
+    const pendingPDF = rows.filter(r => r.status === 'pendiente')
+    const totalIngresos = effectivePDF.filter(r => r.type === 'ingreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
+    const totalEgresos = effectivePDF.filter(r => r.type === 'egreso').reduce((a, r) => a + (Number(r.amount) || 0) + (Number(r.late_fee) || 0), 0)
     const balance = totalIngresos - totalEgresos
 
     autoTable(doc, {
@@ -167,6 +181,7 @@ async function exportPDF(rows, filters, t, language, formatCurrency, filename = 
             ['', '', '', '', `▲ ${t('finances.types.ingreso')}`, fmt(totalIngresos), '', '', ''],
             ['', '', '', '', `▼ ${t('finances.types.egreso')}`, `- ${fmt(totalEgresos)}`, '', '', ''],
             ['', '', '', '', 'BALANCE NETO', balance >= 0 ? fmt(balance) : `- ${fmt(Math.abs(balance))}`, '', '', ''],
+            ...(pendingPDF.length > 0 ? [['', '', '', '', `(*) ${pendingPDF.length} pendiente(s) excluido(s)`, '', '', '', '']] : []),
         ],
         footStyles: { fillColor: [30, 64, 175], textColor: 255, fontStyle: 'bold' },
         didParseCell: (d) => {
